@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: SAES Cookiecutter sample template deploying Lambda Layers.
+
+Metadata:
+  Version: 0.0.1
+
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Lambda configuration
+        Parameters:
+          - LambdaRuntimeEnv
+      - Label:
+          default: Other configuration
+        Parameters:
+          - ResourceTags
+          - Environment
+    ParameterLabels:
+      LambdaRuntimeEnv:
+        default: Lambda/Layers Runtime Environment
+      ResourceTags:
+        default: Resource Tags
+      Environment:
+        deafult: Infrastructure Environment
+
+Parameters:
+  LambdaRuntimeEnv:
+    Description: The runtime for Lambda access Function/Layer. Valid values are Python and Nodejs.
+    Type: String
+    AllowedValues:
+      - python
+      - nodejs
+    Default: python
+
+  ResourceTags:
+    Description: Tag resources, which can help you identify and categorize them. For example project or application name e.g. MyAwesomeApp.
+    Type: String
+    Default: MyApp
+
+  Environment:
+    Description: The type of environment to tag your infrastructure with. You can specify DEV (development), TEST (test), or PROD (production).
+    Type: String
+    AllowedValues:
+      - DEV
+      - TEST
+      - PROD
+    Default: DEV
+
+Conditions:
+  IsPython: !Equals [!Ref LambdaRuntimeEnv, python]
+
+Resources:
+  LayerVersionStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: layer.template
+      Parameters:
+        LambdaRuntimeEnv: !Ref LambdaRuntimeEnv
+      Tags:
+        - Key: Project
+          Value: !Ref ResourceTags
+        - Key: Environment
+          Value: !Ref Environment
+
+Outputs:
+  LambdaLayerArn:
+    Value: !If
+      - IsPython
+      - !GetAtt LayerVersionStack.Outputs.PythonLambdaLayer
+      - !GetAtt LayerVersionStack.Outputs.NodeJsLambdaLayer
