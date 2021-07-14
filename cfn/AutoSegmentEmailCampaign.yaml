@@ -1,3 +1,4 @@
+---
 # author: pavlosik@
 ---
 AWSTemplateFormatVersion: 2010-09-09
@@ -19,8 +20,8 @@ Resources:
     Metadata:
       cfn_nag:
         rules_to_suppress:
-          - id: W89
-            reason: Not public facing.
+        - id: W89
+          reason: Not public facing.
     Properties:
       Handler: index.lambda_handler
       Role: !GetAtt PinpointSegmentCampaignCreateDeleteRole.Arn
@@ -28,7 +29,7 @@ Resources:
       Timeout: 60
       Environment:
         Variables:
-          LOG_LEVEL: "INFO"
+          LOG_LEVEL: INFO
           PINPOINT_PROJECT_ID: !Ref PinpointProjectId
       ReservedConcurrentExecutions: 3
       Code:
@@ -52,7 +53,7 @@ Resources:
                                   ]:
               log_level = "ERROR"
             logging.getLogger().setLevel(log_level)
-            logging.info(event)            
+            logging.info(event)
             response = client.create_segment(
             ApplicationId=appid,
             WriteSegmentRequest={
@@ -80,15 +81,15 @@ Resources:
               "product_name": product_name,
               "interest": interest,
               "product_link": product_link
-            } 
+            }
 
   PinpointSegmentStatus:
     Type: AWS::Lambda::Function
     Metadata:
       cfn_nag:
         rules_to_suppress:
-          - id: W89
-            reason: Not public facing.
+        - id: W89
+          reason: Not public facing.
     Properties:
       Handler: index.lambda_handler
       Role: !GetAtt PinpointSegmentCampaignStatusRole.Arn
@@ -96,7 +97,7 @@ Resources:
       Timeout: 60
       Environment:
         Variables:
-          LOG_LEVEL: "INFO"
+          LOG_LEVEL: INFO
           PINPOINT_PROJECT_ID: !Ref PinpointProjectId
       ReservedConcurrentExecutions: 3
       Code:
@@ -134,8 +135,8 @@ Resources:
               print(e)
               segment_id = "NA"
               segment_status = "INVALID"
-              db_logging_status = "SEGMENT_FAILED"   
-            
+              db_logging_status = "SEGMENT_FAILED"
+
             return {
               "SegmentId": segment_id,
               "SegmentStatus": segment_status,
@@ -143,15 +144,15 @@ Resources:
               "interest": interest,
               "product_link": product_link,
               "db_logging_status": db_logging_status
-            } 
+            }
 
   PinpointCampaignCreate:
     Type: AWS::Lambda::Function
     Metadata:
       cfn_nag:
         rules_to_suppress:
-          - id: W89
-            reason: Not public facing.
+        - id: W89
+          reason: Not public facing.
     Properties:
       Handler: index.lambda_handler
       Role: !GetAtt PinpointSegmentCampaignCreateDeleteRole.Arn
@@ -159,7 +160,7 @@ Resources:
       Timeout: 60
       Environment:
         Variables:
-          LOG_LEVEL: "INFO"
+          LOG_LEVEL: INFO
           PINPOINT_PROJECT_ID: !Ref PinpointProjectId
           FROM_ADDRESS: !Ref EmailFromAddress
       ReservedConcurrentExecutions: 3
@@ -211,7 +212,7 @@ Resources:
                     "Name": campaign_name,
                     "Schedule": {
                         "Frequency": "ONCE",
-                        "IsLocalTime": False, 
+                        "IsLocalTime": False,
                         "StartTime": "IMMEDIATE",
                         "Timezone": "UTC+01"
                     },
@@ -233,8 +234,8 @@ Resources:
     Metadata:
       cfn_nag:
         rules_to_suppress:
-          - id: W89
-            reason: Not public facing.
+        - id: W89
+          reason: Not public facing.
     Properties:
       Handler: index.lambda_handler
       Role: !GetAtt PinpointSegmentCampaignStatusRole.Arn
@@ -242,7 +243,7 @@ Resources:
       Timeout: 60
       Environment:
         Variables:
-          LOG_LEVEL: "INFO"
+          LOG_LEVEL: INFO
           PINPOINT_PROJECT_ID: !Ref PinpointProjectId
       ReservedConcurrentExecutions: 3
       Code:
@@ -297,8 +298,8 @@ Resources:
     Metadata:
       cfn_nag:
         rules_to_suppress:
-          - id: W89
-            reason: Not public facing.
+        - id: W89
+          reason: Not public facing.
     Properties:
       Handler: index.lambda_handler
       Role: !GetAtt PinpointSegmentCampaignCreateDeleteRole.Arn
@@ -306,7 +307,7 @@ Resources:
       Timeout: 60
       Environment:
         Variables:
-          LOG_LEVEL: "INFO"
+          LOG_LEVEL: INFO
           PINPOINT_PROJECT_ID: !Ref PinpointProjectId
       ReservedConcurrentExecutions: 3
       Code:
@@ -338,7 +339,7 @@ Resources:
                 ApplicationId=os.environ.get("PINPOINT_PROJECT_ID"),
                 SegmentId=event["SegmentId"]
             )
-            logging.info(response)   
+            logging.info(response)
             db_logging_status = "SEGMENT_CAMPAIGN_SUCCESS"
 
             return {
@@ -360,8 +361,8 @@ Resources:
     Metadata:
       cfn_nag:
         rules_to_suppress:
-          - id: W89
-            reason: Not public facing.
+        - id: W89
+          reason: Not public facing.
     Properties:
       Handler: index.lambda_handler
       Role: !GetAtt PinpointSegmentCampaignCreateDeleteRole.Arn
@@ -369,7 +370,7 @@ Resources:
       Timeout: 60
       Environment:
         Variables:
-          LOG_LEVEL: "INFO"
+          LOG_LEVEL: INFO
           PINPOINT_PROJECT_ID: !Ref PinpointProjectId
       ReservedConcurrentExecutions: 3
       Code:
@@ -395,8 +396,8 @@ Resources:
                 ApplicationId=os.environ.get("PINPOINT_PROJECT_ID"),
                 SegmentId=event["SegmentId"]
             )
-            logging.info(response)   
-            db_logging_status = "CAMPAIGN_FAILED"           
+            logging.info(response)
+            db_logging_status = "CAMPAIGN_FAILED"
 
             return {
               "SegmentId" : event["SegmentId"],
@@ -406,14 +407,14 @@ Resources:
               "product_link": event["product_link"],
               "db_logging_status": db_logging_status
             }
-  
+
   PinpointDynamoDBLogging:
     Type: AWS::Lambda::Function
     Metadata:
       cfn_nag:
         rules_to_suppress:
-          - id: W89
-            reason: Not public facing.
+        - id: W89
+          reason: Not public facing.
     Properties:
       Handler: index.lambda_handler
       Role: !GetAtt LoggingLambdaRole.Arn
@@ -421,8 +422,8 @@ Resources:
       Timeout: 60
       Environment:
         Variables:
-          LOG_LEVEL: "INFO"
-          TABLE_NAME: !Select [1, !Split ['/', !GetAtt LoggingDynamoDBTable.Arn]] 
+          LOG_LEVEL: INFO
+          TABLE_NAME: !Select [1, !Split [/, !GetAtt LoggingDynamoDBTable.Arn]]
       ReservedConcurrentExecutions: 3
       Code:
         ZipFile: |
@@ -528,221 +529,216 @@ Resources:
     Metadata:
       cfn_nag:
         rules_to_suppress:
-          - id: W47
-            reason: Not required.
+        - id: W47
+          reason: Not required.
     Properties:
-      DisplayName: "PinpointCreateCampaignNotifications"
+      DisplayName: PinpointCreateCampaignNotifications
 
   SegmentCampaignStateMachine:
     Type: AWS::StepFunctions::StateMachine
     Properties:
       RoleArn: !GetAtt StateMachineRole.Arn
-      DefinitionString:
-        !Sub
-          - |-
-            {
-              "StartAt": "CreateSegment",
-              "States": {
-                "CreateSegment": {
-                  "Type": "Task",
-                  "Resource": "${PinpointSegmentCreateArn}",
-                  "Next": "SegmentWait"
+      DefinitionString: !Sub
+      - |-
+        {
+          "StartAt": "CreateSegment",
+          "States": {
+            "CreateSegment": {
+              "Type": "Task",
+              "Resource": "${PinpointSegmentCreateArn}",
+              "Next": "SegmentWait"
+            },
+            "SegmentWait": {
+              "Type": "Wait",
+              "Seconds": 5,
+              "Next": "SegmentStatus"
+            },
+            "SegmentStatus": {
+              "Type": "Task",
+              "Resource": "${PinpointSegmentStatusArn}",
+              "Next": "IsSegmentFinished"
+            },
+            "IsSegmentFinished": {
+              "Type": "Choice",
+              "Default": "SegmentWait",
+              "Choices": [
+                {
+                  "Variable": "$.SegmentStatus",
+                  "StringEquals": "FAILED",
+                  "Next": "SegmentFailed"
                 },
-                "SegmentWait": {
-                  "Type": "Wait",
-                  "Seconds": 5,
-                  "Next": "SegmentStatus"
-                },
-                "SegmentStatus": {
-                  "Type": "Task",
-                  "Resource": "${PinpointSegmentStatusArn}",
-                  "Next": "IsSegmentFinished"
-                },
-                "IsSegmentFinished": {
-                  "Type": "Choice",
-                  "Default": "SegmentWait",
-                  "Choices": [
-                    {
-                      "Variable": "$.SegmentStatus",
-                      "StringEquals": "FAILED",
-                      "Next": "SegmentFailed"
-                    },
-                    {
-                      "Variable": "$.SegmentStatus",
-                      "StringEquals": "COMPLETED",
-                      "Next": "SegmentSuccess"
-                    }
-                  ]
-                },             
-                "SegmentSuccess": {
-                  "Type": "Pass",
-                  "Parameters": {
-                    "SegmentId.$": "$.SegmentId",
-                    "SegmentStatus.$": "$.SegmentStatus",
-                    "product_name.$": "$.product_name",
-                    "interest.$": "$.interest",
-                    "product_link.$": "$.product_link"
-                  },
-                  "Next": "CreateCampaign"
-                },
-                "CreateCampaign": {
-                  "Type": "Task",
-                  "Resource": "${PinpointCampaignCreateArn}",
-                  "Next": "CampaignWait"
-                },
-                "CampaignWait": {
-                  "Type": "Wait",
-                  "Seconds": 5,
-                  "Next": "CampaignStatus"
-                },
-                "CampaignStatus": {
-                  "Type": "Task",
-                  "Resource": "${PinpointCampaignCampaignStatusArn}",
-                  "Next": "IsCampaignFinished"
-                },
-                "IsCampaignFinished": {
-                  "Type": "Choice",
-                  "Default": "CampaignWait",
-                  "Choices": [
-                    {
-                      "Variable": "$.CampaignStatus",
-                      "StringEquals": "INVALID",
-                      "Next": "DeleteSegment"
-                    },
-                    {
-                      "Variable": "$.CampaignStatus",
-                      "StringEquals": "COMPLETED",
-                      "Next": "CampaignSuccess"
-                    }
-                  ]
-                },
-                "CampaignSuccess": {
-                  "Type": "Pass",
-                  "Parameters": {
-                    "SegmentId.$": "$.SegmentId",
-                    "CampaignId.$": "$.CampaignId",
-                    "CampaignStatus.$": "$.CampaignStatus",
-                    "Start.$": "$.Start",
-                    "End.$": "$.End",
-                    "SuccessfulEndpointCount.$": "$.SuccessfulEndpointCount",
-                    "TotalEndpointCount.$": "$.TotalEndpointCount",
-                    "interest.$": "$.interest",
-                    "product_name.$": "$.product_name",
-                    "product_link.$": "$.product_link"
-                  },
-                  "Next": "DeleteCampaignSegment"
-                },
-                "DeleteCampaignSegment": {
-                  "Type": "Task",
-                  "Resource": "${PinpointDeleteCampaignSegmentArn}",
-                  "Next": "EmitSuccess"
-                },
-                "EmitSuccess": {
-                  "Type": "Task",
-                  "Resource": "arn:aws:states:::sns:publish",
-                  "ResultPath": null,
-                  "Parameters": {
-                    "TopicArn": "${SNSTopicArn}",
-                    "Message": {
-                      "Message": "Campaign Create Successful",
-                      "CampaignCreateResult.$": "$"
-                    },
-                    "Subject": "Amazon Pinpoint Campaign Create Successful",
-                    "MessageAttributes": {
-                      "notification_type": {
-                        "DataType": "String",
-                        "StringValue": "success"
-                      }
-                    }
-                  },
-                  "Next": "Logging"
-                },
-                "Logging": {
-                  "Type": "Task",
-                  "Resource": "${PinpointDynamoDBLoggingArn}",
-                  "End": true                
-                },
-                "SegmentFailed": {
-                  "Type": "Task",
-                  "Resource": "arn:aws:states:::sns:publish",
-                  "Parameters": {
-                    "TopicArn": "${SNSTopicArn}",
-                    "Message": {
-                      "Message": "Segment Create Failed"
-                    },
-                    "Subject": "Amazon Pinpoint Campaign Create Failed",
-                    "MessageAttributes": {
-                        "notification_type": {
-                            "DataType": "String",
-                            "StringValue": "failure"
-                        }
-                    }
-                  },
-                  "Next": "Logging"
-                },
-                "DeleteSegment": {
-                  "Type": "Task",
-                  "Resource": "${PinpointDeleteSegmentArn}",
-                  "Next": "CampaignFailed"
-                },
-                "CampaignFailed": {
-                  "Type": "Task",
-                  "Resource": "arn:aws:states:::sns:publish",
-                  "Parameters": {
-                    "TopicArn": "${SNSTopicArn}",
-                    "Message": {
-                      "Message": "Campaign Create Failed",
-                      "CampaignCreateResult.$": "$"
-                    },
-                    "Subject": "Amazon Pinpoint Campaign Create Failed",
-                    "MessageAttributes": {
-                        "notification_type": {
-                            "DataType": "String",
-                            "StringValue": "failure"
-                        }
-                    }
-                  },
-                  "Next": "Logging"
+                {
+                  "Variable": "$.SegmentStatus",
+                  "StringEquals": "COMPLETED",
+                  "Next": "SegmentSuccess"
                 }
-              }
+              ]
+            },
+            "SegmentSuccess": {
+              "Type": "Pass",
+              "Parameters": {
+                "SegmentId.$": "$.SegmentId",
+                "SegmentStatus.$": "$.SegmentStatus",
+                "product_name.$": "$.product_name",
+                "interest.$": "$.interest",
+                "product_link.$": "$.product_link"
+              },
+              "Next": "CreateCampaign"
+            },
+            "CreateCampaign": {
+              "Type": "Task",
+              "Resource": "${PinpointCampaignCreateArn}",
+              "Next": "CampaignWait"
+            },
+            "CampaignWait": {
+              "Type": "Wait",
+              "Seconds": 5,
+              "Next": "CampaignStatus"
+            },
+            "CampaignStatus": {
+              "Type": "Task",
+              "Resource": "${PinpointCampaignCampaignStatusArn}",
+              "Next": "IsCampaignFinished"
+            },
+            "IsCampaignFinished": {
+              "Type": "Choice",
+              "Default": "CampaignWait",
+              "Choices": [
+                {
+                  "Variable": "$.CampaignStatus",
+                  "StringEquals": "INVALID",
+                  "Next": "DeleteSegment"
+                },
+                {
+                  "Variable": "$.CampaignStatus",
+                  "StringEquals": "COMPLETED",
+                  "Next": "CampaignSuccess"
+                }
+              ]
+            },
+            "CampaignSuccess": {
+              "Type": "Pass",
+              "Parameters": {
+                "SegmentId.$": "$.SegmentId",
+                "CampaignId.$": "$.CampaignId",
+                "CampaignStatus.$": "$.CampaignStatus",
+                "Start.$": "$.Start",
+                "End.$": "$.End",
+                "SuccessfulEndpointCount.$": "$.SuccessfulEndpointCount",
+                "TotalEndpointCount.$": "$.TotalEndpointCount",
+                "interest.$": "$.interest",
+                "product_name.$": "$.product_name",
+                "product_link.$": "$.product_link"
+              },
+              "Next": "DeleteCampaignSegment"
+            },
+            "DeleteCampaignSegment": {
+              "Type": "Task",
+              "Resource": "${PinpointDeleteCampaignSegmentArn}",
+              "Next": "EmitSuccess"
+            },
+            "EmitSuccess": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::sns:publish",
+              "ResultPath": null,
+              "Parameters": {
+                "TopicArn": "${SNSTopicArn}",
+                "Message": {
+                  "Message": "Campaign Create Successful",
+                  "CampaignCreateResult.$": "$"
+                },
+                "Subject": "Amazon Pinpoint Campaign Create Successful",
+                "MessageAttributes": {
+                  "notification_type": {
+                    "DataType": "String",
+                    "StringValue": "success"
+                  }
+                }
+              },
+              "Next": "Logging"
+            },
+            "Logging": {
+              "Type": "Task",
+              "Resource": "${PinpointDynamoDBLoggingArn}",
+              "End": true
+            },
+            "SegmentFailed": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::sns:publish",
+              "Parameters": {
+                "TopicArn": "${SNSTopicArn}",
+                "Message": {
+                  "Message": "Segment Create Failed"
+                },
+                "Subject": "Amazon Pinpoint Campaign Create Failed",
+                "MessageAttributes": {
+                    "notification_type": {
+                        "DataType": "String",
+                        "StringValue": "failure"
+                    }
+                }
+              },
+              "Next": "Logging"
+            },
+            "DeleteSegment": {
+              "Type": "Task",
+              "Resource": "${PinpointDeleteSegmentArn}",
+              "Next": "CampaignFailed"
+            },
+            "CampaignFailed": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::sns:publish",
+              "Parameters": {
+                "TopicArn": "${SNSTopicArn}",
+                "Message": {
+                  "Message": "Campaign Create Failed",
+                  "CampaignCreateResult.$": "$"
+                },
+                "Subject": "Amazon Pinpoint Campaign Create Failed",
+                "MessageAttributes": {
+                    "notification_type": {
+                        "DataType": "String",
+                        "StringValue": "failure"
+                    }
+                }
+              },
+              "Next": "Logging"
             }
-          - {PinpointDynamoDBLoggingArn: !GetAtt PinpointDynamoDBLogging.Arn, PinpointDeleteSegmentArn: !GetAtt PinpointDeleteSegment.Arn, PinpointDeleteCampaignSegmentArn: !GetAtt PinpointDeleteCampaignSegment.Arn, PinpointSegmentStatusArn: !GetAtt PinpointSegmentStatus.Arn, PinpointSegmentCreateArn: !GetAtt PinpointSegmentCreate.Arn, PinpointCampaignCreateArn: !GetAtt PinpointCampaignCreate.Arn, PinpointCampaignCampaignStatusArn: !GetAtt PinpointCampaignCampaignStatus.Arn, SNSTopicArn: !Ref PinpointCampaignNotificationTopic}
-
+          }
+        }
+      - {PinpointDynamoDBLoggingArn: !GetAtt PinpointDynamoDBLogging.Arn, PinpointDeleteSegmentArn: !GetAtt PinpointDeleteSegment.Arn, PinpointDeleteCampaignSegmentArn: !GetAtt PinpointDeleteCampaignSegment.Arn, PinpointSegmentStatusArn: !GetAtt PinpointSegmentStatus.Arn, PinpointSegmentCreateArn: !GetAtt PinpointSegmentCreate.Arn, PinpointCampaignCreateArn: !GetAtt PinpointCampaignCreate.Arn, PinpointCampaignCampaignStatusArn: !GetAtt PinpointCampaignCampaignStatus.Arn, SNSTopicArn: !Ref PinpointCampaignNotificationTopic}
   PinpointSegmentCampaignCreateDeleteRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - lambda.amazonaws.com
-            Action:
-              - "sts:AssumeRole"
-      Path: "/"
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: /
       Policies:
-        -
-          PolicyName: "root"
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              -
-                Effect: "Allow"
-                Action:
-                  - "logs:CreateLogGroup"
-                  - "logs:CreateLogStream"
-                  - "logs:PutLogEvents"
-                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
-              -
-                Effect: "Allow"
-                Action:
-                  - "mobiletargeting:CreateCampaign"
-                  - "mobiletargeting:DeleteCampaign"
-                  - "mobiletargeting:CreateSegment"
-                  - "mobiletargeting:DeleteSegment"
-                Resource:
-                  - !Sub "arn:aws:mobiletargeting:${AWS::Region}:${AWS::AccountId}:*"
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+          - Effect: Allow
+            Action:
+            - mobiletargeting:CreateCampaign
+            - mobiletargeting:DeleteCampaign
+            - mobiletargeting:CreateSegment
+            - mobiletargeting:DeleteSegment
+            Resource:
+            - !Sub "arn:aws:mobiletargeting:${AWS::Region}:${AWS::AccountId}:*"
 
   PinpointSegmentCampaignStatusRole:
     Type: AWS::IAM::Role
@@ -750,74 +746,67 @@ Resources:
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - lambda.amazonaws.com
-            Action:
-              - "sts:AssumeRole"
-      Path: "/"
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: /
       Policies:
-        -
-          PolicyName: "root"
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              -
-                Effect: "Allow"
-                Action:
-                  - "logs:CreateLogGroup"
-                  - "logs:CreateLogStream"
-                  - "logs:PutLogEvents"
-                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
-              -
-                Effect: "Allow"
-                Action:
-                  - "mobiletargeting:GetCampaignActivities"
-                  - "mobiletargeting:GetSegment"
-                Resource:
-                  - !Sub "arn:aws:mobiletargeting:${AWS::Region}:${AWS::AccountId}:*"
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+          - Effect: Allow
+            Action:
+            - mobiletargeting:GetCampaignActivities
+            - mobiletargeting:GetSegment
+            Resource:
+            - !Sub "arn:aws:mobiletargeting:${AWS::Region}:${AWS::AccountId}:*"
 
   StateMachineRole:
     Type: AWS::IAM::Role
     Metadata:
       cfn_nag:
         rules_to_suppress:
-          - id: W76
-            reason: Complex Role that is used for StateMachine to invoke many other lambdas
+        - id: W76
+          reason: Complex Role that is used for StateMachine to invoke many other lambdas
     Properties:
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
-          -
-            Effect: "Allow"
-            Principal:
-              Service:
-                - "states.amazonaws.com"
-            Action:
-              - "sts:AssumeRole"
-      Path: "/"
+        - Effect: Allow
+          Principal:
+            Service:
+            - states.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: /
       Policies:
-        -
-          PolicyName: "root"
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              -
-                Effect: "Allow"
-                Action: "lambda:InvokeFunction"
-                Resource:
-                  - !GetAtt PinpointCampaignCreate.Arn
-                  - !GetAtt PinpointCampaignCampaignStatus.Arn
-                  - !GetAtt PinpointSegmentCreate.Arn
-                  - !GetAtt PinpointSegmentStatus.Arn
-                  - !GetAtt PinpointDeleteCampaignSegment.Arn
-                  - !GetAtt PinpointDeleteSegment.Arn
-                  - !GetAtt PinpointDynamoDBLogging.Arn
-              -
-                Effect: "Allow"
-                Action:  sns:Publish
-                Resource: !Ref PinpointCampaignNotificationTopic
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action: lambda:InvokeFunction
+            Resource:
+            - !GetAtt PinpointCampaignCreate.Arn
+            - !GetAtt PinpointCampaignCampaignStatus.Arn
+            - !GetAtt PinpointSegmentCreate.Arn
+            - !GetAtt PinpointSegmentStatus.Arn
+            - !GetAtt PinpointDeleteCampaignSegment.Arn
+            - !GetAtt PinpointDeleteSegment.Arn
+            - !GetAtt PinpointDynamoDBLogging.Arn
+          - Effect: Allow
+            Action: sns:Publish
+            Resource: !Ref PinpointCampaignNotificationTopic
 
 #### DYNAMO DB TABLES
 ##################################
@@ -826,15 +815,15 @@ Resources:
     Type: AWS::DynamoDB::Table
     UpdateReplacePolicy: Retain
     DeletionPolicy: Retain
-    Properties: 
+    Properties:
       BillingMode: PAY_PER_REQUEST
-      AttributeDefinitions: 
+      AttributeDefinitions:
       - AttributeName: OutputDate
         AttributeType: S
-      KeySchema: 
+      KeySchema:
       - AttributeName: OutputDate
         KeyType: HASH
-      PointInTimeRecoverySpecification:  
+      PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
       SSESpecification:
         SSEEnabled: true
@@ -845,31 +834,28 @@ Resources:
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - lambda.amazonaws.com
-            Action:
-              - "sts:AssumeRole"
-      Path: "/"
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: /
       Policies:
-        -
-          PolicyName: "root"
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - 
-                Effect: "Allow"
-                Action:
-                  - "dynamodb:PutItem"
-                Resource: !GetAtt LoggingDynamoDBTable.Arn
-              - 
-                Effect: "Allow"
-                Action:
-                  - "logs:CreateLogGroup"
-                  - "logs:CreateLogStream"
-                  - "logs:PutLogEvents"
-                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - dynamodb:PutItem
+            Resource: !GetAtt LoggingDynamoDBTable.Arn
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
 
 Outputs:
   SegmentCampaignStateMachineArn:

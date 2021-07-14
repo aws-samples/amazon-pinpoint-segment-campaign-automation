@@ -1,7 +1,6 @@
 ### Local development
 /config.mk
-/src/layers/nodejs/nodejs/
-/src/layers/python/python/
+/src/layers/python/boto3/python/
 /cfn/packaged.template
 /src/layers/nodejs/package-lock.json
 

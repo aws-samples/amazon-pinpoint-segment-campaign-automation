@@ -11,8 +11,7 @@ SET_ID = $(eval BUCKET_ID=$(GENERATE_ID))
 BUCKET_NAME = $(shell basename $(PWD)-$(BUCKET_ID))
 STACK_NAME = $(shell basename $(PWD))
 CONFIG_FILE = config.mk
-PYTHON_PATH ?= ./src/layers/python
-NODEJS_PATH ?= ./src/layers/nodejs
+LAYER_PATH ?= ./src/layers
 
 ifneq ("$(wildcard $(CONFIG_FILE))","")
 	include $(CONFIG_FILE)
@@ -67,13 +66,10 @@ bucket:
 
 # Build, Package, Deploy and Destroy
 build:
-	@$(PYTHON) -m pip install -r $(PYTHON_PATH)/requirements.txt --target $(PYTHON_PATH)/python --upgrade
-
-	@cd $(NODEJS_PATH); \
-		mkdir -p nodejs; \
-		rm -rf node_modules nodejs/node_modules; \
-		npm install --production; \
-		mv node_modules nodejs/;
+	@for layer in $(LAYER_PATH)/python/*; do \
+  		printf "\n--> Installing %s requirements...\n" $${layer}; \
+    	$(PYTHON) -m pip install -r $${layer}/requirements.txt --target $${layer}/python --upgrade; \
+    done
 
 package: build
 	@printf "\n--> Packaging and uploading templates to the %s S3 bucket ...\n" $(BUCKET_NAME)
