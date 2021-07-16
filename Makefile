@@ -66,7 +66,7 @@ bucket:
 
 # Build, Package, Deploy and Destroy
 build:
-	@for layer in $(LAYER_PATH)/python/*; do \
+	@for layer in $(LAYER_PATH)/*; do \
   		printf "\n--> Installing %s requirements...\n" $${layer}; \
     	$(PYTHON) -m pip install -r $${layer}/requirements.txt --target $${layer}/python --upgrade; \
     done
@@ -88,7 +88,9 @@ deploy: package
 	  --region $(AWS_REGION) \
 	  --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
 	  --parameter-overrides \
-	  	LambdaRuntimeEnv=$(LAMBDA_RUNTIME_ENV)
+	  	LambdaRuntimeEnv=$(LAMBDA_RUNTIME_ENV) \
+	  	PinpointProjectId=$(PINPOINT_PROJECT_ID) \
+	  	EmailFromAddress=$(EMAIL_FROM_ADDRESS)
 
 delete:
 	@printf "\n--> Deleting %s stack...\n" $(STACK_NAME)
