@@ -11,6 +11,7 @@ Metadata:
           default: Pinpoint configuration
         Parameters:
           - PinpointProjectId
+          - EmailFromAddress
       - Label:
           default: Other configuration
         Parameters:
@@ -19,6 +20,8 @@ Metadata:
     ParameterLabels:
       PinpointProjectId:
         default: Pinpoint ProjectId
+      EmailFromAddress:
+        default: Verified email address
       ResourceTags:
         default: Resource Tags
       Environment:
@@ -27,6 +30,10 @@ Metadata:
 Parameters:
   PinpointProjectId:
     Description: Amazon Pinpoint Project ID
+    Type: String
+
+  EmailFromAddress:
+    Description: Type the email that you would like the campaign email to be sent from. This email address needs to be validated first.
     Type: String
 
   ResourceTags:
@@ -61,6 +68,7 @@ Resources:
       Parameters:
         Boto3Layer: !GetAtt LayerVersionStack.Outputs.Boto3Layer
         PinpointProjectId: !Ref PinpointProjectId
+        EmailFromAddress: !Ref EmailFromAddress
       Tags:
         - Key: Project
           Value: !Ref ResourceTags

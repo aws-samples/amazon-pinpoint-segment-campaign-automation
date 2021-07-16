@@ -6,6 +6,9 @@ Parameters:
   PinpointProjectId:
     Type: String
 
+  EmailFromAddress:
+    Type: String
+
   Boto3Layer:
     Type: String
 
@@ -69,6 +72,70 @@ Resources:
       ReservedConcurrentExecutions: 3
       Role: !GetAtt PinpointSegmentServiceRole.Arn
       Handler: segment_delete.lambda_handler
+      Runtime: python3.8
+      Layers:
+        - !Ref Boto3Layer
+      Timeout: 60
+      Tracing: Active
+
+  PinpointCampaignCreate:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - XrayServiceAccessPolicy
+      - CloudWatchLogsServiceAccessPolicy
+      - PinpointSegmentAccessPolicy
+    Properties:
+      CodeUri: ../src/lamdas/campaign-create
+      Environment:
+        Variables:
+          LOG_LEVEL: INFO
+          PINPOINT_PROJECT_ID: !Ref PinpointProjectId
+          FROM_ADDRESS: !Ref EmailFromAddress
+      ReservedConcurrentExecutions: 3
+      Role: !GetAtt PinpointSegmentServiceRole.Arn
+      Handler: campaign_create.lambda_handler
+      Runtime: python3.8
+      Layers:
+        - !Ref Boto3Layer
+      Timeout: 60
+      Tracing: Active
+
+  PinpointCampaignStatus:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - XrayServiceAccessPolicy
+      - CloudWatchLogsServiceAccessPolicy
+      - PinpointSegmentAccessPolicy
+    Properties:
+      CodeUri: ../src/lamdas/campaign-status
+      Environment:
+        Variables:
+          LOG_LEVEL: INFO
+          PINPOINT_PROJECT_ID: !Ref PinpointProjectId
+      ReservedConcurrentExecutions: 3
+      Role: !GetAtt PinpointSegmentServiceRole.Arn
+      Handler: campaign_status.lambda_handler
+      Runtime: python3.8
+      Layers:
+        - !Ref Boto3Layer
+      Timeout: 60
+      Tracing: Active
+
+  PinpointCampaigntDelete:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - XrayServiceAccessPolicy
+      - CloudWatchLogsServiceAccessPolicy
+      - PinpointSegmentAccessPolicy
+    Properties:
+      CodeUri: ../src/lamdas/campaign-delete
+      Environment:
+        Variables:
+          LOG_LEVEL: INFO
+          PINPOINT_PROJECT_ID: !Ref PinpointProjectId
+      ReservedConcurrentExecutions: 3
+      Role: !GetAtt PinpointSegmentServiceRole.Arn
+      Handler: campaign_delete.lambda_handler
       Runtime: python3.8
       Layers:
         - !Ref Boto3Layer
