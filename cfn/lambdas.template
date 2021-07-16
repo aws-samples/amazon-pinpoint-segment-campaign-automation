@@ -20,7 +20,7 @@ Resources:
     DependsOn:
       - XrayServiceAccessPolicy
       - CloudWatchLogsServiceAccessPolicy
-      - PinpointSegmentAccessPolicy
+      - PinpointAccessPolicy
     Properties:
       CodeUri: ../src/lamdas/segment-create
       Environment:
@@ -28,7 +28,7 @@ Resources:
           LOG_LEVEL: INFO
           PINPOINT_PROJECT_ID: !Ref PinpointProjectId
       ReservedConcurrentExecutions: 3
-      Role: !GetAtt PinpointSegmentServiceRole.Arn
+      Role: !GetAtt PinpointServiceRole.Arn
       Handler: segment_create.lambda_handler
       Runtime: python3.8
       Layers:
@@ -41,7 +41,7 @@ Resources:
     DependsOn:
       - XrayServiceAccessPolicy
       - CloudWatchLogsServiceAccessPolicy
-      - PinpointSegmentAccessPolicy
+      - PinpointAccessPolicy
     Properties:
       CodeUri: ../src/lamdas/segment-status
       Environment:
@@ -49,7 +49,7 @@ Resources:
           LOG_LEVEL: INFO
           PINPOINT_PROJECT_ID: !Ref PinpointProjectId
       ReservedConcurrentExecutions: 3
-      Role: !GetAtt PinpointSegmentServiceRole.Arn
+      Role: !GetAtt PinpointServiceRole.Arn
       Handler: segment_status.lambda_handler
       Runtime: python3.8
       Layers:
@@ -62,7 +62,7 @@ Resources:
     DependsOn:
       - XrayServiceAccessPolicy
       - CloudWatchLogsServiceAccessPolicy
-      - PinpointSegmentAccessPolicy
+      - PinpointAccessPolicy
     Properties:
       CodeUri: ../src/lamdas/segment-delete
       Environment:
@@ -70,7 +70,7 @@ Resources:
           LOG_LEVEL: INFO
           PINPOINT_PROJECT_ID: !Ref PinpointProjectId
       ReservedConcurrentExecutions: 3
-      Role: !GetAtt PinpointSegmentServiceRole.Arn
+      Role: !GetAtt PinpointServiceRole.Arn
       Handler: segment_delete.lambda_handler
       Runtime: python3.8
       Layers:
@@ -83,7 +83,7 @@ Resources:
     DependsOn:
       - XrayServiceAccessPolicy
       - CloudWatchLogsServiceAccessPolicy
-      - PinpointSegmentAccessPolicy
+      - PinpointAccessPolicy
     Properties:
       CodeUri: ../src/lamdas/campaign-create
       Environment:
@@ -92,7 +92,7 @@ Resources:
           PINPOINT_PROJECT_ID: !Ref PinpointProjectId
           FROM_ADDRESS: !Ref EmailFromAddress
       ReservedConcurrentExecutions: 3
-      Role: !GetAtt PinpointSegmentServiceRole.Arn
+      Role: !GetAtt PinpointServiceRole.Arn
       Handler: campaign_create.lambda_handler
       Runtime: python3.8
       Layers:
@@ -105,7 +105,7 @@ Resources:
     DependsOn:
       - XrayServiceAccessPolicy
       - CloudWatchLogsServiceAccessPolicy
-      - PinpointSegmentAccessPolicy
+      - PinpointAccessPolicy
     Properties:
       CodeUri: ../src/lamdas/campaign-status
       Environment:
@@ -113,7 +113,7 @@ Resources:
           LOG_LEVEL: INFO
           PINPOINT_PROJECT_ID: !Ref PinpointProjectId
       ReservedConcurrentExecutions: 3
-      Role: !GetAtt PinpointSegmentServiceRole.Arn
+      Role: !GetAtt PinpointServiceRole.Arn
       Handler: campaign_status.lambda_handler
       Runtime: python3.8
       Layers:
@@ -121,12 +121,12 @@ Resources:
       Timeout: 60
       Tracing: Active
 
-  PinpointCampaigntDelete:
+  PinpointCampaigtDelete:
     Type: AWS::Serverless::Function
     DependsOn:
       - XrayServiceAccessPolicy
       - CloudWatchLogsServiceAccessPolicy
-      - PinpointSegmentAccessPolicy
+      - PinpointAccessPolicy
     Properties:
       CodeUri: ../src/lamdas/campaign-delete
       Environment:
@@ -134,7 +134,7 @@ Resources:
           LOG_LEVEL: INFO
           PINPOINT_PROJECT_ID: !Ref PinpointProjectId
       ReservedConcurrentExecutions: 3
-      Role: !GetAtt PinpointSegmentServiceRole.Arn
+      Role: !GetAtt PinpointServiceRole.Arn
       Handler: campaign_delete.lambda_handler
       Runtime: python3.8
       Layers:
@@ -142,7 +142,7 @@ Resources:
       Timeout: 60
       Tracing: Active
 
-  PinpointSegmentServiceRole:
+  PinpointServiceRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -169,7 +169,7 @@ Resources:
             - xray:GetSamplingStatisticSummaries
           Resource: '*'
       Roles:
-        - !Ref PinpointSegmentServiceRole
+        - !Ref PinpointServiceRole
 
   CloudWatchLogsServiceAccessPolicy:
     Type: AWS::IAM::ManagedPolicy
@@ -187,9 +187,9 @@ Resources:
             - !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:*
             - !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:log-stream:*
       Roles:
-        - !Ref PinpointSegmentServiceRole
+        - !Ref PinpointServiceRole
 
-  PinpointSegmentAccessPolicy:
+  PinpointAccessPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
       PolicyDocument:
@@ -208,4 +208,4 @@ Resources:
               - !Sub arn:${AWS::Partition}:mobiletargeting:${AWS::Region}:${AWS::AccountId}:apps/${PinpointProjectId}/segments/*
               - !Sub arn:${AWS::Partition}:mobiletargeting:${AWS::Region}:${AWS::AccountId}:apps/${PinpointProjectId}/campaigns/*
       Roles:
-        - !Ref PinpointSegmentServiceRole
+        - !Ref PinpointServiceRole
