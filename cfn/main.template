@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
-Description: Amazon Pinpoint egment campaign automation blog ().
+Description: Amazon Pinpoint Segment Email Campaign Creation ().
 
 Metadata:
   Version: 0.0.1
@@ -8,17 +8,27 @@ Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
+          default: Pinpoint configuration
+        Parameters:
+          - PinpointProjectId
+      - Label:
           default: Other configuration
         Parameters:
           - ResourceTags
           - Environment
     ParameterLabels:
+      PinpointProjectId:
+        default: Pinpoint ProjectId
       ResourceTags:
         default: Resource Tags
       Environment:
         deafult: Infrastructure Environment
 
 Parameters:
+  PinpointProjectId:
+    Description: Amazon Pinpoint Project ID
+    Type: String
+
   ResourceTags:
     Description: Tag resources, which can help you identify and categorize them. For example project or application name e.g. MyAwesomeApp.
     Type: String
@@ -37,7 +47,20 @@ Resources:
   LayerVersionStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: layer.template
+      TemplateURL: layers.template
+      Tags:
+        - Key: Project
+          Value: !Ref ResourceTags
+        - Key: Environment
+          Value: !Ref Environment
+
+  LamdasStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: lambdas.template
+      Parameters:
+        Boto3Layer: !GetAtt LayerVersionStack.Outputs.Boto3Layer
+        PinpointProjectId: !Ref PinpointProjectId
       Tags:
         - Key: Project
           Value: !Ref ResourceTags
@@ -45,5 +68,5 @@ Resources:
           Value: !Ref Environment
 
 Outputs:
-  PythonLambdaLayer:
-    Value: !GetAtt LayerVersionStack.Outputs.PythonLambdaLayer
+  Boto3Layer:
+    Value: !GetAtt LayerVersionStack.Outputs.Boto3Layer

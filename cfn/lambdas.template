@@ -1,0 +1,144 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Lambda function template.
+
+Parameters:
+  PinpointProjectId:
+    Type: String
+
+  Boto3Layer:
+    Type: String
+
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  PinpointSegmentCreate:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - XrayServiceAccessPolicy
+      - CloudWatchLogsServiceAccessPolicy
+      - PinpointSegmentAccessPolicy
+    Properties:
+      CodeUri: ../src/lamdas/segment-create
+      Environment:
+        Variables:
+          LOG_LEVEL: INFO
+          PINPOINT_PROJECT_ID: !Ref PinpointProjectId
+      ReservedConcurrentExecutions: 3
+      Role: !GetAtt PinpointSegmentServiceRole.Arn
+      Handler: segment_create.lambda_handler
+      Runtime: python3.8
+      Layers:
+        - !Ref Boto3Layer
+      Timeout: 60
+      Tracing: Active
+
+  PinpointSegmentStatus:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - XrayServiceAccessPolicy
+      - CloudWatchLogsServiceAccessPolicy
+      - PinpointSegmentAccessPolicy
+    Properties:
+      CodeUri: ../src/lamdas/segment-status
+      Environment:
+        Variables:
+          LOG_LEVEL: INFO
+          PINPOINT_PROJECT_ID: !Ref PinpointProjectId
+      ReservedConcurrentExecutions: 3
+      Role: !GetAtt PinpointSegmentServiceRole.Arn
+      Handler: segment_status.lambda_handler
+      Runtime: python3.8
+      Layers:
+        - !Ref Boto3Layer
+      Timeout: 60
+      Tracing: Active
+
+  PinpointSegmentDelete:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - XrayServiceAccessPolicy
+      - CloudWatchLogsServiceAccessPolicy
+      - PinpointSegmentAccessPolicy
+    Properties:
+      CodeUri: ../src/lamdas/segment-delete
+      Environment:
+        Variables:
+          LOG_LEVEL: INFO
+          PINPOINT_PROJECT_ID: !Ref PinpointProjectId
+      ReservedConcurrentExecutions: 3
+      Role: !GetAtt PinpointSegmentServiceRole.Arn
+      Handler: segment_delete.lambda_handler
+      Runtime: python3.8
+      Layers:
+        - !Ref Boto3Layer
+      Timeout: 60
+      Tracing: Active
+
+  PinpointSegmentServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+
+  XrayServiceAccessPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: !Sub Allows Lambda Function to access X-Ray. Stack ${AWS::StackName}
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Action:
+            - xray:PutTraceSegments
+            - xray:PutTelemetryRecords
+            - xray:GetSamplingRules
+            - xray:GetSamplingTargets
+            - xray:GetSamplingStatisticSummaries
+          Resource: '*'
+      Roles:
+        - !Ref PinpointSegmentServiceRole
+
+  CloudWatchLogsServiceAccessPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: !Sub Allows Lambda Function to access CloudWatch logs. Stack ${AWS::StackName}
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource:
+            - !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:*
+            - !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:log-stream:*
+      Roles:
+        - !Ref PinpointSegmentServiceRole
+
+  PinpointSegmentAccessPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - mobiletargeting:GetCampaignActivities
+              - mobiletargeting:GetSegment
+              - mobiletargeting:CreateCampaign
+              - mobiletargeting:DeleteCampaign
+              - mobiletargeting:CreateSegment
+              - mobiletargeting:DeleteSegment
+            Effect: Allow
+            Resource:
+              - !Sub arn:${AWS::Partition}:mobiletargeting:${AWS::Region}:${AWS::AccountId}:apps/${PinpointProjectId}
+              - !Sub arn:${AWS::Partition}:mobiletargeting:${AWS::Region}:${AWS::AccountId}:apps/${PinpointProjectId}/segments/*
+              - !Sub arn:${AWS::Partition}:mobiletargeting:${AWS::Region}:${AWS::AccountId}:apps/${PinpointProjectId}/campaigns/*
+      Roles:
+        - !Ref PinpointSegmentServiceRole
