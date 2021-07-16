@@ -10,8 +10,7 @@ def lambda_handler(event, context):
     interest = event["interest"]
     product_name = event["product_name"]
     product_link = event["product_link"]
-    segmentid = event["SegmentId"]  # TODO: var not used, can we remove?
-    global log_level  # TODO: undefined at module level, can we remove?
+    segmentid = event["SegmentId"]
     log_level = str(os.environ.get("LOG_LEVEL")).upper()
     if log_level not in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
         log_level = "ERROR"
@@ -21,7 +20,7 @@ def lambda_handler(event, context):
     try:
         response = client.get_segment(
             ApplicationId=os.environ.get("PINPOINT_PROJECT_ID"),
-            SegmentId=event["SegmentId"],
+            SegmentId=segmentid,
         )
         segment_id = response["SegmentResponse"]["Id"]
         segment_status = "COMPLETED"

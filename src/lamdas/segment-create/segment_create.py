@@ -12,7 +12,6 @@ def lambda_handler(event, context):
     product_name = event["product_name"]
     product_link = event["product_link"]
     segment_name = "segment" + "_" + interest + "_" + product_name
-    global log_level  # TODO: undefined at module level, can we remove?
     log_level = str(os.environ.get("LOG_LEVEL")).upper()
     if log_level not in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
         log_level = "ERROR"

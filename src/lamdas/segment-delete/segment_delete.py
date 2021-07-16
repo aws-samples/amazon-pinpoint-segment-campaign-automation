@@ -8,7 +8,6 @@ client = boto3.client("pinpoint")
 
 
 def lambda_handler(event, context):
-    global log_level  # TODO: undefined at module level, can we remove?
     log_level = str(os.environ.get("LOG_LEVEL")).upper()
     if log_level not in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
         log_level = "ERROR"
