@@ -1,0 +1,113 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: DynamoDb template.
+
+Parameters:
+  Boto3Layer:
+    Type: String
+
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  DynamoDBLoggingTable:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: OutputDate
+          AttributeType: S
+      KeySchema:
+        - AttributeName: OutputDate
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        SSEEnabled: true
+
+  DynamoDBLogging:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - XrayServiceAccessPolicy
+      - CloudWatchLogsServiceAccessPolicy
+      - DynamoDbAccessPolicy
+    Properties:
+      CodeUri: ../src/lamdas/dynamodb-logging
+      Environment:
+        Variables:
+          LOG_LEVEL: INFO
+          TABLE_NAME: !Ref DynamoDBLoggingTable
+      ReservedConcurrentExecutions: 3
+      Role: !GetAtt DynamoDBLoggingRole.Arn
+      Handler: dynamodb_logging.lambda_handler
+      Runtime: python3.8
+      Layers:
+        - !Ref Boto3Layer
+      Timeout: 60
+      Tracing: Active
+
+  DynamoDBLoggingRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+
+  XrayServiceAccessPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: !Sub Allows Lambda Function to access X-Ray. Stack ${AWS::StackName}
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Action:
+            - xray:PutTraceSegments
+            - xray:PutTelemetryRecords
+            - xray:GetSamplingRules
+            - xray:GetSamplingTargets
+            - xray:GetSamplingStatisticSummaries
+          Resource: '*'
+      Roles:
+        - !Ref DynamoDBLoggingRole
+
+  CloudWatchLogsServiceAccessPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: !Sub Allows Lambda Function to access CloudWatch logs. Stack ${AWS::StackName}
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource:
+            - !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:*
+            - !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:log-stream:*
+      Roles:
+        - !Ref DynamoDBLoggingRole
+
+  DynamoDbAccessPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: !Sub Allows Lambda Function to access DynamoDb. Stack ${AWS::StackName}
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Action:
+            - dynamodb:PutItem
+          Resource: !GetAtt DynamoDBLoggingTable.Arn
+      Roles:
+        - !Ref DynamoDBLoggingRole
+
+Outputs:
+  DynamoDBLogging:
+    Value: !GetAtt DynamoDBLogging.Arn
