@@ -87,6 +87,24 @@ Resources:
         - Key: Environment
           Value: !Ref Environment
 
+  StepFunctionsStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: step-functions.template
+      Parameters:
+        PinpointSegmentCreate: !GetAtt LamdasStack.Outputs.PinpointSegmentCreate
+        PinpointSegmentStatus: !GetAtt LamdasStack.Outputs.PinpointSegmentStatus
+        PinpointSegmentDelete: !GetAtt LamdasStack.Outputs.PinpointSegmentDelete
+        PinpointCampaignCreate: !GetAtt LamdasStack.Outputs.PinpointCampaignCreate
+        PinpointCampaignStatus: !GetAtt LamdasStack.Outputs.PinpointCampaignStatus
+        PinpointCampaigtDelete: !GetAtt LamdasStack.Outputs.PinpointCampaigtDelete
+        DynamoDBLogging: !GetAtt DynamoDbStack.Outputs.DynamoDBLogging
+      Tags:
+        - Key: Project
+          Value: !Ref ResourceTags
+        - Key: Environment
+          Value: !Ref Environment
+
 Outputs:
-  Boto3Layer:
-    Value: !GetAtt LayerVersionStack.Outputs.Boto3Layer
+  SegmentCampaignStateMachineArn:
+    Value: !GetAtt StepFunctionsStack.Outputs.SegmentCampaignStateMachineArn

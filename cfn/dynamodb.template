@@ -107,3 +107,7 @@ Resources:
           Resource: !GetAtt DynamoDBLoggingTable.Arn
       Roles:
         - !Ref DynamoDBLoggingRole
+
+Outputs:
+  DynamoDBLogging:
+    Value: !GetAtt DynamoDBLogging.Arn

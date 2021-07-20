@@ -209,3 +209,22 @@ Resources:
               - !Sub arn:${AWS::Partition}:mobiletargeting:${AWS::Region}:${AWS::AccountId}:apps/${PinpointProjectId}/campaigns/*
       Roles:
         - !Ref PinpointServiceRole
+
+Outputs:
+  PinpointSegmentCreate:
+    Value: !GetAtt PinpointSegmentCreate.Arn
+
+  PinpointSegmentStatus:
+    Value: !GetAtt PinpointSegmentStatus.Arn
+
+  PinpointSegmentDelete:
+    Value: !GetAtt PinpointSegmentDelete.Arn
+
+  PinpointCampaignCreate:
+    Value: !GetAtt PinpointCampaignCreate.Arn
+
+  PinpointCampaignStatus:
+    Value: !GetAtt PinpointCampaignStatus.Arn
+
+  PinpointCampaigtDelete:
+    Value: !GetAtt PinpointCampaigtDelete.Arn
