@@ -75,6 +75,18 @@ Resources:
         - Key: Environment
           Value: !Ref Environment
 
+  DynamoDbStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: dynamodb.template
+      Parameters:
+        Boto3Layer: !GetAtt LayerVersionStack.Outputs.Boto3Layer
+      Tags:
+        - Key: Project
+          Value: !Ref ResourceTags
+        - Key: Environment
+          Value: !Ref Environment
+
 Outputs:
   Boto3Layer:
     Value: !GetAtt LayerVersionStack.Outputs.Boto3Layer
