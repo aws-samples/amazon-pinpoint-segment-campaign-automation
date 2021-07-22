@@ -47,7 +47,7 @@ cost for using this sample. For full details, see the pricing pages for each AWS
 |---------------|-------|-----------|
 |PinpointProjectId|`required`|Amazon Pinpoint Project ID.|
 |EmailFromAddress|`required`|Type the email that you would like the campaign email to be sent from. This email address needs to be validated first.|
-|ResourceTags|LocationDetectApp|Tag resources, which can help you identify and categorize them.|
+|ResourceTags|MyApp|Tag resources, which can help you identify and categorize them.|
 |Environment|DEV|The type of environment to tag your infrastructure with.|
 
 When completed, click *Next*
