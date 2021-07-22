@@ -45,16 +45,14 @@ cost for using this sample. For full details, see the pricing pages for each AWS
 
 |Parameter label|Default|Description|
 |---------------|-------|-----------|
-|CreateMap|true|If True, this creates an Amazon Location Map.|
-|MapName|ExampleMap01|Must be a unique map resource name. No spaces allowed. For example, ExampleMap.|
-|MapPricingPla|RequestBasedUsage|Specifies the pricing plan for your map resource.|
-|MapStyle|VectorEsriStreets|Specifies the map style selected from an available data providers.|
+|PinpointProjectId|`required`|Amazon Pinpoint Project ID.|
+|EmailFromAddress|`required`|Type the email that you would like the campaign email to be sent from. This email address needs to be validated first.|
 |ResourceTags|LocationDetectApp|Tag resources, which can help you identify and categorize them.|
 |Environment|DEV|The type of environment to tag your infrastructure with.|
 
 When completed, click *Next*
 1. [Configure stack options](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-add-tags.html) if desired, then click *Next*.
-1. On the review you screen, you must check the boxes for:
+1. On the review screen, you must check the boxes for:
     * "*I acknowledge that AWS CloudFormation might create IAM resources*"
     * "*I acknowledge that AWS CloudFormation might create IAM resources with custom names*"
     * "*I acknowledge that AWS CloudFormation might require the following capability: CAPABILITY_AUTO_EXPAND*"
