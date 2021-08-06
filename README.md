@@ -3,13 +3,27 @@
 [![Publish Version](https://github.com/aws-samples/amazon-pinpoint-segment-campaign-automation/workflows/Publish%20Version/badge.svg)](https://github.com/aws-samples/amazon-pinpoint-segment-campaign-automation/actions)
 [![Unit Tests](https://github.com/aws-samples/amazon-pinpoint-segment-campaign-automation/workflows/Unit%20Tests/badge.svg)](https://github.com/aws-samples/amazon-pinpoint-segment-campaign-automation/actions)
 
+#### Introduction
 
-TODO: Fill this README out!
+This repository contains a solution for automating the process of capturing your customers’ interests in a product category so you can tailor your marketing messages. It uses a series of AWS services including Amazon Pinpoint, AWS Step Functions, AWS Lambda, Amazon DynamoDB and Amazon Simple Notification Service (SNS).
 
-Be sure to:
+An AWS CloudFormation template will deploy an AWS Step Functions with a series of Lambdas, one Amazon DynamoDB table and three SNS topics. For a successful deployment, you will need to provide an existing Amazon Pinpoint project as well as a validated email address from where you can send emails from.
 
-* Change the title in this README
-* Edit your repository description on GitHub
+This repository is part of a blog in which a step by step implementation guide can be found.
+
+#### Architecture
+
+This solution uses:
+* [Amazon Pinpoint](https://aws.amazon.com/pinpoint/) to send email campaigns and store customer data
+* [AWS Step Functions](https://aws.amazon.com/step-functions/) to orchestrate the automation of Amazon Pinpoint activities
+* [AWS Lambda](https://aws.amazon.com/lambda/) to perform calls to Amazon Pinpoint and process data
+* [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) as a target database to store all logs from this solution
+* [Amazon Simple Notification Service (SNS)](https://aws.amazon.com/sns/) as a way to emit messages depending the outcome of each AWS Step Functions execution
+
+An overview of the architecture is below:
+
+ [![Architecture Diagram](https://github.com/aws-samples/amazon-pinpoint-segment-campaign-automation/blob/pavlosik-patch-1/docs/Architecture%20Diagram.png)]
+
 
 ### Usage
 
