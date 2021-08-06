@@ -5,11 +5,11 @@
 
 #### Introduction
 
-This repository contains a solution for automating the process of capturing your customers’ interests in a product category so you can tailor your marketing messages. It uses a series of AWS services including Amazon Pinpoint, AWS Step Functions, AWS Lambda, Amazon DynamoDB and Amazon Simple Notification Service (SNS).
+This repository contains a solution for automating the process of capturing your customers’ interests in a product category, so you can tailor your marketing messages. It uses a series of AWS services including Amazon Pinpoint, AWS Step Functions, AWS Lambda, Amazon DynamoDB and Amazon Simple Notification Service (SNS).
 
 An AWS CloudFormation template will deploy an AWS Step Functions with a series of Lambdas, one Amazon DynamoDB table and three SNS topics. For a successful deployment, you will need to provide an existing Amazon Pinpoint project as well as a validated email address from where you can send emails from.
 
-This repository is part of a blog in which a step by step implementation guide can be found.
+This repository is part of a [blog post](#TODO: link-to-blog) where you can find step-by-step instructions.
 
 #### Architecture
 
@@ -18,12 +18,11 @@ This solution uses:
 * [AWS Step Functions](https://aws.amazon.com/step-functions/) to orchestrate the automation of Amazon Pinpoint activities
 * [AWS Lambda](https://aws.amazon.com/lambda/) to perform calls to Amazon Pinpoint and process data
 * [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) as a target database to store all logs from this solution
-* [Amazon Simple Notification Service (SNS)](https://aws.amazon.com/sns/) as a way to emit messages depending the outcome of each AWS Step Functions execution
+* [Amazon Simple Notification Service (SNS)](https://aws.amazon.com/sns/) as a way to emit messages depending on the outcome of each AWS Step Functions execution
 
 An overview of the architecture is below:
 
- [![Architecture Diagram](https://github.com/aws-samples/amazon-pinpoint-segment-campaign-automation/blob/pavlosik-patch-1/docs/Architecture%20Diagram.png)]
-
+ [![Architecture Diagram](docs/architecture-diagram.png)]
 
 ### Usage
 
