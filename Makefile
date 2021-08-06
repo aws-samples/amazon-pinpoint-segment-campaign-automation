@@ -66,10 +66,7 @@ bucket:
 
 # Build, Package, Deploy and Destroy
 build:
-	@for layer in $(LAYER_PATH)/*; do \
-  		printf "\n--> Installing %s requirements...\n" $${layer}; \
-    	$(PYTHON) -m pip install -r $${layer}/requirements.txt --target $${layer}/python --upgrade; \
-    done
+	$(PYTHON) -m pip install -r $(LAYER_PATH)/boto3/requirements.txt --target $(LAYER_PATH)/boto3/python --upgrade; \
 
 package: build
 	@printf "\n--> Packaging and uploading templates to the %s S3 bucket ...\n" $(BUCKET_NAME)
