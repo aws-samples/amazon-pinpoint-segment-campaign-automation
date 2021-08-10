@@ -11,7 +11,7 @@ def lambda_handler(event, context):
     segment_id = event["SegmentId"]
     product_name = event["product_name"]
     product_link = event["product_link"]
-    formatted_prod_link = (""" + {} + """).format(product_link)
+    formatted_prod_link = '"' + product_link + '"'
     from_email = os.environ.get("FROM_ADDRESS")
     campaign_name = "campaign" + "_" + interest + "_" + product_name
     appid = os.environ.get("PINPOINT_PROJECT_ID")
