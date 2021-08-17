@@ -9,7 +9,7 @@ This repository contains a solution for automating the process of capturing your
 
 An AWS CloudFormation template will deploy an AWS Step Functions with a series of Lambdas, one Amazon DynamoDB table and three SNS topics. For a successful deployment, you will need to provide an existing Amazon Pinpoint project as well as a validated email address from where you can send emails from.
 
-This repository is part of a [blog post](#TODO: link-to-blog) where you can find step-by-step instructions.
+This repository is part of a [blog post](https://aws.amazon.com/blogs/industries/automate-product-inventory-updates-to-customers-based-on-their-interests/) where you can find step-by-step instructions.
 
 #### Architecture
 
